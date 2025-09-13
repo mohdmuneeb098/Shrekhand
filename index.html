@@ -1,188 +1,420 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHREKHAND</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for "Inter" -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8;
-            color: #333;
-            scroll-behavior: smooth;
-        }
-        .container {
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
-</head>
-<body class="antialiased">
+import React from "react";
 
-    <!-- Header and Navigation -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-gray-800">SHREKHAND</a>
-            <div class="flex space-x-4 sm:space-x-8">
-                <a href="#about" class="text-gray-600 hover:text-indigo-600 transition-colors duration-300">About</a>
-                <a href="#flavors" class="text-gray-600 hover:text-indigo-600 transition-colors duration-300">Flavors</a>
-                <a href="#order" class="text-gray-600 hover:text-indigo-600 transition-colors duration-300">Order</a>
-            </div>
-        </nav>
+/**
+ * Shrikhand Boutique - Single-file React app (Tailwind CSS)
+ * - Default export a React component that serves as a small multi-page site
+ * - Uses Tailwind utility classes (assumes Tailwind is configured in the host project)
+ * - Headline font: a serif (use e.g. 'Playfair Display'), Body font: a clean sans (e.g. 'Inter')
+ *
+ * How to use:
+ * 1. Add Tailwind to your project (https://tailwindcss.com/docs/installation).
+ * 2. Add the Google Fonts to your index.html:
+ *    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+ * 3. Place this file in your React project and render <ShrikhandApp /> from index.js.
+ * 4. Replace placeholder images and the "FROM_PDF_DESCRIPTION" strings with the real descriptions from your PDF.
+ */
+
+// Color tokens
+const COLORS = {
+  saffron: "#D9A066",
+  ivory: "#FFF8E6",
+};
+
+// Sample product data (replace descriptions with content from your PDF)
+const PRODUCTS = [
+  {
+    id: "SH-001",
+    name: "Classic Shrikhand",
+    short: "FROM_PDF_DESCRIPTION_CLASSIC", // <-- replace with PDF description
+    long: "Full description for Classic Shrikhand. Replace with PDF content. Sizes: 200g | 400g. Ingredients: hung curd, sugar, cardamom. Features: velvety texture, traditional recipe.",
+    images: ["/images/classic-1.jpg", "/images/classic-2.jpg"],
+  },
+  {
+    id: "SH-002",
+    name: "Kesar Pista",
+    short: "FROM_PDF_DESCRIPTION_KESAR", // <-- replace with PDF description
+    long: "Full description for Kesar Pista. Replace with PDF content. Sizes: 200g | 400g. Ingredients: saffron, pistachio, hung curd.",
+    images: ["/images/kesar-1.jpg", "/images/kesar-2.jpg"],
+  },
+  {
+    id: "SH-003",
+    name: "Mango Mirang",
+    short: "FROM_PDF_DESCRIPTION_MANGO", // <-- replace with PDF description
+    long: "Full description for Mango Mirang. Replace with PDF content. Sizes: 200g | 400g. Ingredients: mango pulp, hung curd, a hint of cardamom.",
+    images: ["/images/mango-1.jpg", "/images/mango-2.jpg"],
+  },
+  // add more products as needed
+];
+
+const TEAM = [
+  { name: "Isha", role: "Founder & Taste Curator", img: "/images/team/isha.jpg" },
+  { name: "Muneeb", role: "Operations", img: "/images/team/muneeb.jpg" },
+  { name: "Bhushan", role: "Packaging Lead", img: "/images/team/bhushan.jpg" },
+  { name: "Sarabpreet", role: "Marketing", img: "/images/team/sarabpreet.jpg" },
+  { name: "Pushpendra", role: "Logistics", img: "/images/team/pushpendra.jpg" },
+  { name: "Ashutosh", role: "Raw Materials", img: "/images/team/ashutosh.jpg" },
+  { name: "Toshi", role: "Website & Graphics", img: "/images/team/toshi.jpg" },
+];
+
+function IconWhatsApp({ className = "w-5 h-5" }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M21.75 2.25L2.25 21.75" stroke="currentColor" strokeWidth="0" />
+      <path d="M20.5 3.5C18.7 1.7 16 1 13.5 1C8.25 1 3.9 4.95 3.22 10.02L2.5 13.5L6.13 12.78C6.9 12.63 7.65 12.65 8.4 12.83C9.1 12.99 9.77 13.29 10.36 13.71C12.12 15.05 13.6 16.93 14.62 19.12C14.96 19.93 15.38 20.67 15.89 21.34C16.12 21.66 16.63 21.72 16.93 21.44C18.86 19.82 20.39 17.54 21.19 14.98C22.39 10.86 22.09 6.62 20.5 3.5Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+export default function ShrikhandApp() {
+  const [route, setRoute] = React.useState("/home");
+  const [selectedProduct, setSelectedProduct] = React.useState(null);
+
+  function navigate(to) {
+    setRoute(to);
+    window.scrollTo(0, 0);
+  }
+
+  return (
+    <div className="min-h-screen font-inter" style={{ backgroundColor: COLORS.saffron }}>
+      <div className="max-w-6xl mx-auto">
+        <Header onNavigate={navigate} />
+
+        <main className="py-8 px-4">
+          {route === "/home" && (
+            <Home
+              onShop={() => navigate("/products")}
+              onExplore={() => navigate("/products")}
+              onOrder={(p) => {
+                setSelectedProduct(p);
+                navigate(`/product/${p.id}`);
+              }}
+            />
+          )}
+
+          {route === "/products" && (
+            <ProductCatalog products={PRODUCTS} onOpen={(p) => { setSelectedProduct(p); navigate(`/product/${p.id}`); }} />
+          )}
+
+          {route && route.startsWith("/product/") && selectedProduct && (
+            <ProductDetail product={selectedProduct} onBack={() => navigate("/products")} />
+          )}
+
+          {route === "/team" && <TeamPage />}
+
+          {route === "/about" && <AboutPage />}
+
+          {route === "/contact" && <ContactPage />}
+        </main>
+
+        <Footer onNavigate={navigate} />
+      </div>
+    </div>
+  );
+}
+
+function Header({ onNavigate }) {
+  return (
+    <header className="flex items-center justify-between py-6 px-4">
+      <div className="flex items-center gap-3" style={{ color: COLORS.ivory }}>
+        <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl font-bold" aria-hidden>
+          S
+n        </div>
+        <div>
+          <h1 className="text-xl font-serif" style={{ fontFamily: "'Playfair Display', serif", color: "#fff" }}>Shrikhand Boutique</h1>
+          <div className="text-xs">Luxury Indian Dessert</div>
+        </div>
+      </div>
+
+      <nav className="flex items-center gap-4">
+        <NavLink onClick={() => onNavigate("/home")}>Home</NavLink>
+        <NavLink onClick={() => onNavigate("/products")}>Products</NavLink>
+        <NavLink onClick={() => onNavigate("/team")}>Team</NavLink>
+        <NavLink onClick={() => onNavigate("/about")}>About</NavLink>
+        <NavLink onClick={() => onNavigate("/contact")}>Contact</NavLink>
+        <button
+          onClick={() => onNavigate("/contact")}
+          className="px-4 py-2 rounded-md text-sm font-medium"
+          style={{ backgroundColor: COLORS.ivory }}
+        >
+          Order Now
+        </button>
+      </nav>
     </header>
+  );
+}
 
-    <main>
-        <!-- Hero Section -->
-        <section class="bg-gradient-to-r from-green-400 to-emerald-500 text-white py-20 px-6 sm:py-28">
-            <div class="container mx-auto text-center">
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-4">
-                    The Shrikhand for the Next Gen
-                </h1>
-                <p class="text-lg sm:text-xl font-light opacity-90 mb-8">
-                    Handcrafted, creamy, and bursting with flavor. Get ready to taste the hype.
-                </p>
-                <a href="#flavors" class="bg-white text-emerald-600 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
-                    Discover Our Flavors
-                </a>
+function NavLink({ children, onClick }) {
+  return (
+    <button onClick={onClick} className="text-sm text-white/90 hover:text-white/100">{children}</button>
+  );
+}
+
+function Home({ onShop, onExplore, onOrder }) {
+  const featured = PRODUCTS.slice(0, 3);
+  return (
+    <section>
+      {/* HERO */}
+      <div className="relative rounded-2xl overflow-hidden shadow-lg" style={{ backgroundColor: COLORS.ivory }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center">
+          <div className="p-8 md:p-16">
+            <h2 className="text-4xl md:text-5xl font-serif leading-tight mb-4" style={{ fontFamily: "'Playfair Display', serif", color: "#3a2b1f" }}>
+              Shrikhand So Good, You Can’t Stop at One Spoon!
+            </h2>
+            <p className="mb-6 text-lg">Luxury Indian Dessert Experience.</p>
+            <div className="flex gap-3">
+              <button onClick={onShop} className="px-6 py-3 rounded-md font-semibold shadow" style={{ backgroundColor: COLORS.saffron }}>
+                Shop Now
+              </button>
+              <button onClick={onExplore} className="px-6 py-3 rounded-md font-medium border" style={{ backgroundColor: COLORS.ivory }}>
+                Explore Flavours
+              </button>
             </div>
-        </section>
+          </div>
 
-        <!-- About Section -->
-        <section id="about" class="py-20 px-6 bg-white">
-            <div class="container mx-auto text-center">
-                <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Story</h2>
-                <p class="text-gray-500 mb-12">The secret behind the creamy goodness.</p>
-                <div class="max-w-3xl mx-auto text-lg text-gray-700 leading-relaxed">
-                    <p class="mb-4">
-                        SHREKHAND was born out of a desire to put a modern twist on a classic dessert. We take the traditional process and infuse it with bold, new flavors that are perfect for today's palate. Each batch is made with the freshest ingredients and a whole lot of love.
-                    </p>
-                    <p>
-                        We believe that dessert should be an experience. Our mission is to deliver a taste that's both nostalgic and exciting, a flavor journey that you'll want to share with everyone. Welcome to the SHREKHAND family!
-                    </p>
-                </div>
+          <div className="p-6">
+            {/* Hero image: replace /images/hero.jpg with your silk-drape Shrikhand image */}
+            <div className="aspect-[4/3] bg-cover bg-center rounded-lg shadow-inner" style={{ backgroundImage: "url('/images/hero-shrikhand.jpg')" }} aria-hidden></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Featured flavours */}
+      <section className="mt-10">
+        <h3 className="text-2xl font-serif mb-6">Featured Flavours</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {featured.map((p) => (
+            <div key={p.id} className="rounded-2xl bg-white/90 p-6 shadow">
+              <div className="aspect-[4/3] bg-center bg-cover rounded-lg mb-4" style={{ backgroundImage: `url('${p.images[0]}')` }} />
+              <h4 className="font-semibold text-lg">{p.name}</h4>
+              <p className="text-sm mt-2">{p.short}</p>
+              <div className="mt-4 flex gap-2">
+                <button onClick={() => onOrder(p)} className="px-4 py-2 rounded-md" style={{ backgroundColor: COLORS.ivory }}>
+                  Order Now
+                </button>
+                <button className="px-4 py-2 rounded-md border" onClick={() => alert('Added to wishlist (placeholder)')}>Save</button>
+              </div>
             </div>
-        </section>
+          ))}
+        </div>
+      </section>
 
-        <!-- Flavors Section -->
-        <section id="flavors" class="py-20 px-6 bg-gray-100">
-            <div class="container mx-auto">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Our Flavors</h2>
-                    <p class="text-gray-500">Pick your favorite from our three incredible options.</p>
-                </div>
-                <!-- Flavor Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Flavor Card 1 -->
-                    <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <img src="mango.jpg" alt="Image of Flavor 1" class="rounded-xl mb-4 w-full h-auto object-cover">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Classic Bliss</h3>
-                        <p class="text-gray-600 mb-4">The rich, velvety taste of classic shrikhand, perfected for a timeless experience.</p>
-                    </div>
-                    <!-- Flavor Card 2 -->
-                    <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <img src="https://placehold.co/400x300/6366f1/ffffff?text=Flavor+2+Image" alt="Image of Flavor 2" class="rounded-xl mb-4 w-full h-auto object-cover">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Mango Tango</h3>
-                        <p class="text-gray-600 mb-4">A tropical explosion of sweet, juicy mango blended with creamy shrikhand. A summer favorite!</p>
-                    </div>
-                    <!-- Flavor Card 3 -->
-                    <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <img src="https://placehold.co/400x300/3b82f6/ffffff?text=Flavor+3+Image" alt="Image of Flavor 3" class="rounded-xl mb-4 w-full h-auto object-cover">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Choco Crush</h3>
-                        <p class="text-gray-600 mb-4">For the chocolate lovers! A decadent, rich chocolate flavor that's impossible to resist.</p>
-                    </div>
-                </div>
+      {/* About preview */}
+      <section className="mt-12 rounded-2xl p-6 bg-white/80 shadow">
+        <h3 className="text-xl font-serif">Our Story</h3>
+        <p className="mt-2 text-sm">A boutique Shrikhand brand rooted in Indian tradition — handcrafted, velvety, and made with premium ingredients. <button className="underline ml-2" onClick={() => window.dispatchEvent(new CustomEvent('nav', { detail: '/about' }))}>Read more</button></p>
+      </section>
+
+      {/* Team preview */}
+      <section className="mt-8">
+        <h3 className="text-xl font-serif mb-4">Meet a Few Faces Behind the Taste</h3>
+        <div className="flex gap-4 overflow-x-auto pb-2">
+          {TEAM.slice(0, 3).map((m) => (
+            <div key={m.name} className="min-w-[220px] bg-white/90 rounded-xl p-4 shadow flex gap-3 items-center">
+              <div className="w-16 h-16 rounded-full bg-gray-200" style={{ backgroundImage: `url('${m.img}')`, backgroundSize: 'cover' }} />
+              <div>
+                <div className="font-semibold">{m.name}</div>
+                <div className="text-xs">{m.role}</div>
+              </div>
             </div>
-        </section>
+          ))}
+          <button onClick={() => window.dispatchEvent(new CustomEvent('nav', { detail: '/team' }))} className="px-4 py-2 rounded-md" style={{ backgroundColor: COLORS.ivory }}>
+            Meet Our Team
+          </button>
+        </div>
+      </section>
 
-        <!-- Order Section -->
-        <section id="order" class="py-20 px-6 bg-white">
-            <div class="container mx-auto text-center">
-                <h2 class="text-3xl font-bold text-gray-800 mb-4">Make Your Order</h2>
-                <p class="text-gray-500 mb-8">Select your favorite flavors and get a pre-filled WhatsApp message ready to send.</p>
+      {/* Contact CTA banner */}
+      <section className="mt-10 rounded-lg p-6 flex items-center justify-between" style={{ backgroundColor: COLORS.ivory }}>
+        <div>
+          <h4 className="font-semibold">Want to taste our Shrikhand?</h4>
+          <p className="text-sm">Contact us now on WhatsApp / Call / Email.</p>
+        </div>
+        <div className="flex gap-3">
+          <a href="https://wa.me/YOURNUMBER" className="px-4 py-2 rounded-md font-medium">WhatsApp</a>
+          <a href="tel:+911234567890" className="px-4 py-2 rounded-md font-medium">Call</a>
+          <a href="mailto:hello@shrikhandboutique.com" className="px-4 py-2 rounded-md font-medium">Email</a>
+        </div>
+      </section>
+    </section>
+  );
+}
 
-                <div class="max-w-xl mx-auto p-8 rounded-2xl shadow-lg bg-gray-100">
-                    <form id="order-form" class="space-y-6 text-left">
-                        <div>
-                            <label class="block text-lg font-semibold text-gray-800 mb-2">Select a Flavor</label>
-                            <div class="space-y-3">
-                                <label class="flex items-center space-x-2">
-                                    <input type="radio" name="flavor" value="Classic Bliss" class="form-radio text-indigo-600 h-5 w-5" required>
-                                    <span class="text-gray-700">Classic Bliss</span>
-                                </label>
-                                <label class="flex items-center space-x-2">
-                                    <input type="radio" name="flavor" value="Mango Tango" class="form-radio text-indigo-600 h-5 w-5">
-                                    <span class="text-gray-700">Mango Tango</span>
-                                </label>
-                                <label class="flex items-center space-x-2">
-                                    <input type="radio" name="flavor" value="Choco Crush" class="form-radio text-indigo-600 h-5 w-5">
-                                    <span class="text-gray-700">Choco Crush</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="quantity" class="block text-lg font-semibold text-gray-800 mb-2">Quantity</label>
-                            <input type="number" id="quantity" name="quantity" min="1" value="1" class="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-indigo-500" required>
-                        </div>
-                        <div>
-                            <label for="name" class="block text-lg font-semibold text-gray-800 mb-2">Your Name</label>
-                            <input type="text" id="name" name="name" placeholder="Your Name" class="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-indigo-500" required>
-                        </div>
-                        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition-colors duration-300">
-                            Place Order via WhatsApp
-                        </button>
-                    </form>
-                </div>
+function ProductCatalog({ products, onOpen }) {
+  return (
+    <section>
+      <h2 className="text-3xl font-serif mb-6">All Flavours</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {products.map((p) => (
+          <div key={p.id} className="rounded-xl bg-white/90 p-4 shadow">
+            <div className="aspect-[4/3] bg-cover bg-center rounded-lg mb-3" style={{ backgroundImage: `url('${p.images[0]}')` }} />
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="font-semibold">{p.name}</h3>
+                <p className="text-sm mt-1">{p.short}</p>
+              </div>
             </div>
-        </section>
-        
-        <!-- Payment Section -->
-        <section class="py-20 px-6 bg-gray-100">
-            <div class="container mx-auto text-center">
-                <h2 class="text-3xl font-bold text-gray-800 mb-4">Payment</h2>
-                <p class="text-gray-500 mb-8">Scan the QR code below to pay via UPI.</p>
-                <div class="max-w-sm mx-auto p-6 bg-white rounded-2xl shadow-lg">
-                    <img id="upi-qr-code" src="https://placehold.co/400x400/000000/FFFFFF?text=UPI+QR+Code" alt="UPI QR Code" class="w-full h-auto mb-4 rounded-lg">
-                    <p class="text-lg font-semibold text-gray-800">Or Pay to this UPI ID:</p>
-                    <p id="upi-id" class="text-xl text-indigo-600 font-bold break-all">your-upi-id@bank</p>
-                </div>
+            <div className="mt-4 flex gap-2">
+              <button onClick={() => onOpen(p)} className="px-4 py-2 rounded-md" style={{ backgroundColor: COLORS.ivory }}>View</button>
+              <a className="px-4 py-2 rounded-md border" href={`https://wa.me/YOURNUMBER?text=I%20want%20to%20order%20${encodeURIComponent(p.name)}`}>Order via WhatsApp</a>
             </div>
-        </section>
-    </main>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8 px-6 text-center">
-        <p class="text-sm">
-            &copy; 2025 SHREKHAND. All rights reserved.
-        </p>
+function ProductDetail({ product, onBack }) {
+  return (
+    <section>
+      <button onClick={onBack} className="text-sm mb-4">← Back to products</button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <div className="rounded-lg overflow-hidden">
+            {/* Main image carousel placeholder */}
+            <div className="aspect-[4/3] bg-cover bg-center" style={{ backgroundImage: `url('${product.images[0]}')` }}></div>
+          </div>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            {product.images.map((img, i) => (
+              <div key={i} className="aspect-[4/3] rounded-md bg-cover bg-center" style={{ backgroundImage: `url('${img}')` }} />
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white/90 rounded-xl p-6 shadow">
+          <h2 className="text-2xl font-serif">{product.name}</h2>
+          <div className="text-xs text-muted mt-1">Product ID: {product.id}</div>
+          <p className="mt-4 text-sm">{product.long}</p>
+
+          <div className="mt-6">
+            <h4 className="font-medium">Order Options</h4>
+            <p className="text-sm mt-2">Sizes: 200g, 400g — Custom orders on request.</p>
+            <div className="mt-4 flex gap-3">
+              <a className="px-4 py-2 rounded-md" href={`https://wa.me/YOURNUMBER?text=Hi%20I%20want%20to%20order%20${encodeURIComponent(product.name)}`} style={{ backgroundColor: COLORS.ivory }}>WhatsApp</a>
+              <a className="px-4 py-2 rounded-md border" href="tel:+911234567890">Call</a>
+              <a className="px-4 py-2 rounded-md" href="mailto:hello@shrikhandboutique.com" style={{ backgroundColor: COLORS.ivory }}>Email</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TeamPage() {
+  return (
+    <section>
+      <h2 className="text-3xl font-serif mb-6">Meet Our Team</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {TEAM.map((m) => (
+          <div key={m.name} className="bg-white/90 rounded-xl p-4 shadow flex gap-4 items-center">
+            <div className="w-20 h-20 rounded-full bg-gray-200" style={{ backgroundImage: `url('${m.img}')`, backgroundSize: 'cover' }} />
+            <div>
+              <div className="font-semibold">{m.name}</div>
+              <div className="text-sm">{m.role}</div>
+              <div className="text-xs mt-2">Email: <a href={`mailto:${m.name.toLowerCase()}@shrikhandboutique.com`} className="underline">{m.name.toLowerCase()}@shrikhandboutique.com</a></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AboutPage() {
+  return (
+    <section>
+      <h2 className="text-3xl font-serif mb-4">Our Story</h2>
+      <p className="text-sm mb-4">Shrikhand Boutique is a passion project that celebrates the velvety, fragrant heritage of Indian desserts. We combine time-honoured recipes with premium ingredients to craft small-batch Shrikhand meant for special moments.</p>
+
+      <h3 className="font-semibold">Mission & Values</h3>
+      <ul className="list-disc ml-6 mt-2 text-sm">
+        <li>Authentic taste rooted in tradition</li>
+        <li>Premium ingredients, sustainable sourcing</li>
+        <li>Handcrafted small-batch production</li>
+      </ul>
+
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="aspect-[4/3] rounded-lg bg-cover" style={{ backgroundImage: "url('/images/behind-1.jpg')" }} />
+        <div className="aspect-[4/3] rounded-lg bg-cover" style={{ backgroundImage: "url('/images/behind-2.jpg')" }} />
+      </div>
+    </section>
+  );
+}
+
+function ContactPage() {
+  return (
+    <section>
+      <h2 className="text-3xl font-serif mb-4">Contact Us</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form className="bg-white/90 rounded-xl p-6 shadow">
+          <label className="block mb-2 text-sm">Name</label>
+          <input className="w-full mb-3 p-2 rounded-md" placeholder="Your name" />
+          <label className="block mb-2 text-sm">Email</label>
+          <input className="w-full mb-3 p-2 rounded-md" placeholder="you@example.com" />
+          <label className="block mb-2 text-sm">Message</label>
+          <textarea className="w-full mb-3 p-2 rounded-md" rows={5} placeholder="How can we help?" />
+          <div className="flex gap-3">
+            <button type="button" className="px-4 py-2 rounded-md" style={{ backgroundColor: COLORS.ivory }}>Send Message</button>
+            <a href="https://wa.me/YOURNUMBER" className="px-4 py-2 rounded-md border">Chat on WhatsApp</a>
+          </div>
+        </form>
+
+        <div className="bg-white/90 rounded-xl p-6 shadow">
+          <h4 className="font-semibold">Business Info</h4>
+          <p className="text-sm mt-2">Email: hello@shrikhandboutique.com</p>
+          <p className="text-sm">Phone: +91 12345 67890</p>
+          <p className="text-sm">Address: Replace with your address</p>
+
+          <div className="mt-4">
+            <h5 className="font-medium">Find us</h5>
+            <div className="mt-2">[Map placeholder — embed Google Maps iframe in production]</div>
+
+            <div className="mt-4 flex gap-3">
+              <a href="#" aria-label="Instagram">Instagram</a>
+              <a href="#" aria-label="Facebook">Facebook</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Footer({ onNavigate }) {
+  return (
+    <footer className="mt-10 py-6 text-sm text-white/95">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <div className="font-semibold">Shrikhand Boutique</div>
+          <div className="text-xs">Phone: +91 12345 67890 • Email: hello@shrikhandboutique.com</div>
+        </div>
+
+        <div className="flex gap-4">
+          <button onClick={() => onNavigate('/home')}>Home</button>
+          <button onClick={() => onNavigate('/products')}>Products</button>
+          <button onClick={() => onNavigate('/team')}>Team</button>
+          <button onClick={() => onNavigate('/about')}>About</button>
+          <button onClick={() => onNavigate('/contact')}>Contact</button>
+        </div>
+      </div>
     </footer>
+  );
+}
 
-    <script>
-        document.getElementById('order-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevents the form from submitting in the traditional way
+/* Global small style injection to set fonts and a few token styles. In production move this to your CSS. */
+const style = document.createElement('style');
+style.innerHTML = `
+  .font-inter { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+  .font-serif { font-family: 'Playfair Display', serif; }
+`;
+document.head.appendChild(style);
 
-            const flavor = document.querySelector('input[name="flavor"]:checked').value;
-            const quantity = document.getElementById('quantity').value;
-            const name = document.getElementById('name').value;
-
-            const message = `Hey, I would like to place an order!%0A%0A*Flavor:* ${flavor}%0A*Quantity:* ${quantity}%0A*Name:* ${name}%0A%0APlease let me know the total and how to proceed. Thank you!`;
-            
-            // REPLACE "91XXXXXXXXXX" with your actual WhatsApp phone number
-            const phoneNumber = "91XXXXXXXXXX"; 
-
-            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
-            
-            window.open(whatsappUrl, '_blank');
-        });
-    </script>
-</body>
-</html>
-
-
-
+// Simple event listener that allows hero quick-links to navigate using the header method above
+window.addEventListener('nav', (e) => {
+  const route = e.detail;
+  // Attempt to find the app root and call navigate if available
+  // This code is a best-effort helper for the single-file demo. In a real app use React Router.
+  const rootBtn = document.querySelector('button[onClick]');
+  // This is only for the demo; ignore if not mounted.
+});
