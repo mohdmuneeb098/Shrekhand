@@ -1,420 +1,487 @@
-import React from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shrikhand - A Luxury Indian Dessert</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for social media icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700&display=swap');
+        .font-serif-display {
+            font-family: 'Playfair Display', serif;
+        }
+        .font-sans-inter {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom Colors from Design Brief */
+        .bg-saffron {
+            background-color: #D9A066;
+        }
+        .text-ivory {
+            color: #FFF8E6;
+        }
+        .bg-ivory {
+            background-color: #FFF8E6;
+        }
+        /* Page switching logic */
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .btn {
+            @apply px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105;
+        }
+    </style>
+</head>
+<body class="bg-saffron text-zinc-800 font-sans-inter">
 
-/**
- * Shrikhand Boutique - Single-file React app (Tailwind CSS)
- * - Default export a React component that serves as a small multi-page site
- * - Uses Tailwind utility classes (assumes Tailwind is configured in the host project)
- * - Headline font: a serif (use e.g. 'Playfair Display'), Body font: a clean sans (e.g. 'Inter')
- *
- * How to use:
- * 1. Add Tailwind to your project (https://tailwindcss.com/docs/installation).
- * 2. Add the Google Fonts to your index.html:
- *    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
- * 3. Place this file in your React project and render <ShrikhandApp /> from index.js.
- * 4. Replace placeholder images and the "FROM_PDF_DESCRIPTION" strings with the real descriptions from your PDF.
- */
-
-// Color tokens
-const COLORS = {
-  saffron: "#D9A066",
-  ivory: "#FFF8E6",
-};
-
-// Sample product data (replace descriptions with content from your PDF)
-const PRODUCTS = [
-  {
-    id: "SH-001",
-    name: "Classic Shrikhand",
-    short: "FROM_PDF_DESCRIPTION_CLASSIC", // <-- replace with PDF description
-    long: "Full description for Classic Shrikhand. Replace with PDF content. Sizes: 200g | 400g. Ingredients: hung curd, sugar, cardamom. Features: velvety texture, traditional recipe.",
-    images: ["/images/classic-1.jpg", "/images/classic-2.jpg"],
-  },
-  {
-    id: "SH-002",
-    name: "Kesar Pista",
-    short: "FROM_PDF_DESCRIPTION_KESAR", // <-- replace with PDF description
-    long: "Full description for Kesar Pista. Replace with PDF content. Sizes: 200g | 400g. Ingredients: saffron, pistachio, hung curd.",
-    images: ["/images/kesar-1.jpg", "/images/kesar-2.jpg"],
-  },
-  {
-    id: "SH-003",
-    name: "Mango Mirang",
-    short: "FROM_PDF_DESCRIPTION_MANGO", // <-- replace with PDF description
-    long: "Full description for Mango Mirang. Replace with PDF content. Sizes: 200g | 400g. Ingredients: mango pulp, hung curd, a hint of cardamom.",
-    images: ["/images/mango-1.jpg", "/images/mango-2.jpg"],
-  },
-  // add more products as needed
-];
-
-const TEAM = [
-  { name: "Isha", role: "Founder & Taste Curator", img: "/images/team/isha.jpg" },
-  { name: "Muneeb", role: "Operations", img: "/images/team/muneeb.jpg" },
-  { name: "Bhushan", role: "Packaging Lead", img: "/images/team/bhushan.jpg" },
-  { name: "Sarabpreet", role: "Marketing", img: "/images/team/sarabpreet.jpg" },
-  { name: "Pushpendra", role: "Logistics", img: "/images/team/pushpendra.jpg" },
-  { name: "Ashutosh", role: "Raw Materials", img: "/images/team/ashutosh.jpg" },
-  { name: "Toshi", role: "Website & Graphics", img: "/images/team/toshi.jpg" },
-];
-
-function IconWhatsApp({ className = "w-5 h-5" }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M21.75 2.25L2.25 21.75" stroke="currentColor" strokeWidth="0" />
-      <path d="M20.5 3.5C18.7 1.7 16 1 13.5 1C8.25 1 3.9 4.95 3.22 10.02L2.5 13.5L6.13 12.78C6.9 12.63 7.65 12.65 8.4 12.83C9.1 12.99 9.77 13.29 10.36 13.71C12.12 15.05 13.6 16.93 14.62 19.12C14.96 19.93 15.38 20.67 15.89 21.34C16.12 21.66 16.63 21.72 16.93 21.44C18.86 19.82 20.39 17.54 21.19 14.98C22.39 10.86 22.09 6.62 20.5 3.5Z" fill="currentColor" />
-    </svg>
-  );
-}
-
-export default function ShrikhandApp() {
-  const [route, setRoute] = React.useState("/home");
-  const [selectedProduct, setSelectedProduct] = React.useState(null);
-
-  function navigate(to) {
-    setRoute(to);
-    window.scrollTo(0, 0);
-  }
-
-  return (
-    <div className="min-h-screen font-inter" style={{ backgroundColor: COLORS.saffron }}>
-      <div className="max-w-6xl mx-auto">
-        <Header onNavigate={navigate} />
-
-        <main className="py-8 px-4">
-          {route === "/home" && (
-            <Home
-              onShop={() => navigate("/products")}
-              onExplore={() => navigate("/products")}
-              onOrder={(p) => {
-                setSelectedProduct(p);
-                navigate(`/product/${p.id}`);
-              }}
-            />
-          )}
-
-          {route === "/products" && (
-            <ProductCatalog products={PRODUCTS} onOpen={(p) => { setSelectedProduct(p); navigate(`/product/${p.id}`); }} />
-          )}
-
-          {route && route.startsWith("/product/") && selectedProduct && (
-            <ProductDetail product={selectedProduct} onBack={() => navigate("/products")} />
-          )}
-
-          {route === "/team" && <TeamPage />}
-
-          {route === "/about" && <AboutPage />}
-
-          {route === "/contact" && <ContactPage />}
-        </main>
-
-        <Footer onNavigate={navigate} />
-      </div>
-    </div>
-  );
-}
-
-function Header({ onNavigate }) {
-  return (
-    <header className="flex items-center justify-between py-6 px-4">
-      <div className="flex items-center gap-3" style={{ color: COLORS.ivory }}>
-        <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl font-bold" aria-hidden>
-          S
-n        </div>
-        <div>
-          <h1 className="text-xl font-serif" style={{ fontFamily: "'Playfair Display', serif", color: "#fff" }}>Shrikhand Boutique</h1>
-          <div className="text-xs">Luxury Indian Dessert</div>
-        </div>
-      </div>
-
-      <nav className="flex items-center gap-4">
-        <NavLink onClick={() => onNavigate("/home")}>Home</NavLink>
-        <NavLink onClick={() => onNavigate("/products")}>Products</NavLink>
-        <NavLink onClick={() => onNavigate("/team")}>Team</NavLink>
-        <NavLink onClick={() => onNavigate("/about")}>About</NavLink>
-        <NavLink onClick={() => onNavigate("/contact")}>Contact</NavLink>
-        <button
-          onClick={() => onNavigate("/contact")}
-          className="px-4 py-2 rounded-md text-sm font-medium"
-          style={{ backgroundColor: COLORS.ivory }}
-        >
-          Order Now
-        </button>
-      </nav>
+    <!-- Header & Navigation -->
+    <header class="bg-saffron text-ivory p-6 shadow-lg sticky top-0 z-50">
+        <nav class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-serif-display cursor-pointer" data-page="home">SHRIKHAND</h1>
+            <ul class="flex space-x-6 text-lg">
+                <li><a href="#" class="hover:underline transition-all duration-200" data-page="home">Home</a></li>
+                <li><a href="#" class="hover:underline transition-all duration-200" data-page="catalog">Products</a></li>
+                <li><a href="#" class="hover:underline transition-all duration-200" data-page="team">Team</a></li>
+                <li><a href="#" class="hover:underline transition-all duration-200" data-page="about">About Us</a></li>
+                <li><a href="#" class="hover:underline transition-all duration-200" data-page="contact">Contact</a></li>
+            </ul>
+        </nav>
     </header>
-  );
-}
 
-function NavLink({ children, onClick }) {
-  return (
-    <button onClick={onClick} className="text-sm text-white/90 hover:text-white/100">{children}</button>
-  );
-}
+    <main class="container mx-auto p-4 md:p-8">
 
-function Home({ onShop, onExplore, onOrder }) {
-  const featured = PRODUCTS.slice(0, 3);
-  return (
-    <section>
-      {/* HERO */}
-      <div className="relative rounded-2xl overflow-hidden shadow-lg" style={{ backgroundColor: COLORS.ivory }}>
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center">
-          <div className="p-8 md:p-16">
-            <h2 className="text-4xl md:text-5xl font-serif leading-tight mb-4" style={{ fontFamily: "'Playfair Display', serif", color: "#3a2b1f" }}>
-              Shrikhand So Good, You Can’t Stop at One Spoon!
-            </h2>
-            <p className="mb-6 text-lg">Luxury Indian Dessert Experience.</p>
-            <div className="flex gap-3">
-              <button onClick={onShop} className="px-6 py-3 rounded-md font-semibold shadow" style={{ backgroundColor: COLORS.saffron }}>
-                Shop Now
-              </button>
-              <button onClick={onExplore} className="px-6 py-3 rounded-md font-medium border" style={{ backgroundColor: COLORS.ivory }}>
-                Explore Flavours
-              </button>
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <!-- Hero Section -->
+            <section class="relative bg-center bg-cover rounded-3xl overflow-hidden shadow-2xl" style="background-image: url('https://i.imgur.com/GzB9o9W.jpeg');">
+                <div class="absolute inset-0 bg-black opacity-30"></div>
+                <div class="relative flex flex-col items-center justify-center text-center py-20 md:py-32 px-4 text-ivory">
+                    <h2 class="text-4xl md:text-6xl font-serif-display leading-tight mb-4">Shrikhand So Good,<br>You Can’t Stop at One Spoon!</h2>
+                    <p class="text-lg md:text-2xl mb-8">A Luxury Indian Dessert Experience.</p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button class="btn bg-ivory text-saffron font-bold shadow-lg" data-page="catalog">Shop Now</button>
+                        <button class="btn border-2 border-ivory text-ivory font-bold hover:bg-ivory hover:text-saffron" data-page="catalog">Explore Flavours</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Featured Flavours Section -->
+            <section class="my-16">
+                <h3 class="text-4xl font-serif-display text-center mb-12">Our Signature Flavours</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Classic Shrikhand Card -->
+                    <div class="bg-ivory p-6 rounded-3xl shadow-lg text-center">
+                        <img src="https://i.imgur.com/T0b49k1.jpeg" alt="Classic Shrikhand" class="w-full h-48 object-cover rounded-2xl mb-4 shadow">
+                        <h4 class="text-2xl font-serif-display mb-2">Classic Shrikhand</h4>
+                        <p class="text-gray-600 mb-4 text-sm">A timeless delicacy, our classic shrikhand is crafted from strained yogurt, saffron, and cardamom, offering a rich and creamy texture that melts in your mouth.</p>
+                        <button class="btn bg-saffron text-ivory font-bold" data-page="detail" data-product="classic">Order Now</button>
+                    </div>
+                    <!-- Kesar Pista Card -->
+                    <div class="bg-ivory p-6 rounded-3xl shadow-lg text-center">
+                        <img src="https://i.imgur.com/p1fH7mR.jpeg" alt="Kesar Pista Shrikhand" class="w-full h-48 object-cover rounded-2xl mb-4 shadow">
+                        <h4 class="text-2xl font-serif-display mb-2">Kesar Pista</h4>
+                        <p class="text-gray-600 mb-4 text-sm">Infused with premium saffron threads and generously topped with chopped pistachios, this flavour is a regal treat for the senses.</p>
+                        <button class="btn bg-saffron text-ivory font-bold" data-page="detail" data-product="kesar-pista">Order Now</button>
+                    </div>
+                    <!-- Mango Mirang Card -->
+                    <div class="bg-ivory p-6 rounded-3xl shadow-lg text-center">
+                        <img src="https://i.imgur.com/1GvL3rV.jpeg" alt="Mango Mirang Shrikhand" class="w-full h-48 object-cover rounded-2xl mb-4 shadow">
+                        <h4 class="text-2xl font-serif-display mb-2">Mango Mirang</h4>
+                        <p class="text-gray-600 mb-4 text-sm">A vibrant blend of creamy shrikhand and the sweet, tangy essence of ripe mangoes, perfect for summer indulgence.</p>
+                        <button class="btn bg-saffron text-ivory font-bold" data-page="detail" data-product="mango">Order Now</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Us Preview -->
+            <section class="bg-ivory p-10 rounded-3xl shadow-xl my-16 text-center">
+                <h3 class="text-4xl font-serif-display mb-4">Our Story</h3>
+                <p class="text-lg text-gray-700 max-w-2xl mx-auto mb-6">Born from a passion to preserve and elevate the timeless art of Indian desserts, our brand takes the traditional craft of making shrikhand and infuses it with a modern, luxurious twist.</p>
+                <button class="btn bg-saffron text-ivory font-bold" data-page="about">Read More</button>
+            </section>
+
+            <!-- Team Preview -->
+            <section class="my-16 text-center">
+                <h3 class="text-4xl font-serif-display mb-8">Meet Our Artisans</h3>
+                <div class="flex flex-col md:flex-row justify-center items-center space-y-8 md:space-y-0 md:space-x-8">
+                    <div class="bg-ivory p-6 rounded-3xl shadow-lg text-center w-full md:w-1/3">
+                        <img src="https://placehold.co/100x100/D9A066/FFF8E6?text=Isha" alt="Isha" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover shadow">
+                        <h4 class="text-xl font-serif-display">Isha Sharma</h4>
+                        <p class="text-gray-600 text-sm">Founder & Creative Head</p>
+                    </div>
+                    <div class="bg-ivory p-6 rounded-3xl shadow-lg text-center w-full md:w-1/3">
+                        <img src="https://placehold.co/100x100/D9A066/FFF8E6?text=Muneeb" alt="Muneeb" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover shadow">
+                        <h4 class="text-xl font-serif-display">Muneeb Khan</h4>
+                        <p class="text-gray-600 text-sm">Head of Raw Materials</p>
+                    </div>
+                    <div class="bg-ivory p-6 rounded-3xl shadow-lg text-center w-full md:w-1/3">
+                        <img src="https://placehold.co/100x100/D9A066/FFF8E6?text=Bhushan" alt="Bhushan" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover shadow">
+                        <h4 class="text-xl font-serif-display">Bhushan Patil</h4>
+                        <p class="text-gray-600 text-sm">Logistics & Distribution</p>
+                    </div>
+                </div>
+                <button class="btn bg-saffron text-ivory font-bold mt-8" data-page="team">Meet Our Team</button>
+            </section>
+
+            <!-- Contact CTA Banner -->
+            <section class="bg-ivory text-center py-12 rounded-3xl shadow-xl my-16">
+                <h3 class="text-3xl md:text-4xl font-serif-display mb-4">Want to taste our Shrikhand?</h3>
+                <p class="text-lg text-gray-700 mb-6">Contact us now on WhatsApp, Call, or Email!</p>
+                <button class="btn bg-saffron text-ivory font-bold" data-page="contact">Contact Us</button>
+            </section>
+        </div>
+
+        <!-- Product Catalog Page -->
+        <div id="catalog" class="page">
+            <h2 class="text-4xl font-serif-display text-center mb-12">Product Catalog</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-ivory p-6 rounded-3xl shadow-lg text-center">
+                    <img src="https://i.imgur.com/T0b49k1.jpeg" alt="Classic Shrikhand" class="w-full h-48 object-cover rounded-2xl mb-4 shadow">
+                    <h4 class="text-2xl font-serif-display mb-2">Classic Shrikhand</h4>
+                    <p class="text-gray-600 mb-4 text-sm">A timeless delicacy crafted from strained yogurt.</p>
+                    <a href="#" class="btn bg-saffron text-ivory font-bold inline-block whatsapp-link" data-product="classic">Order via WhatsApp</a>
+                </div>
+                <div class="bg-ivory p-6 rounded-3xl shadow-lg text-center">
+                    <img src="https://i.imgur.com/p1fH7mR.jpeg" alt="Kesar Pista Shrikhand" class="w-full h-48 object-cover rounded-2xl mb-4 shadow">
+                    <h4 class="text-2xl font-serif-display mb-2">Kesar Pista</h4>
+                    <p class="text-gray-600 mb-4 text-sm">Infused with premium saffron and topped with pistachios.</p>
+                    <a href="#" class="btn bg-saffron text-ivory font-bold inline-block whatsapp-link" data-product="kesar-pista">Order via WhatsApp</a>
+                </div>
+                <div class="bg-ivory p-6 rounded-3xl shadow-lg text-center">
+                    <img src="https://i.imgur.com/1GvL3rV.jpeg" alt="Mango Mirang Shrikhand" class="w-full h-48 object-cover rounded-2xl mb-4 shadow">
+                    <h4 class="text-2xl font-serif-display mb-2">Mango Mirang</h4>
+                    <p class="text-gray-600 mb-4 text-sm">A vibrant blend of creamy shrikhand and ripe mangoes.</p>
+                    <a href="#" class="btn bg-saffron text-ivory font-bold inline-block whatsapp-link" data-product="mango">Order via WhatsApp</a>
+                </div>
             </div>
-          </div>
-
-          <div className="p-6">
-            {/* Hero image: replace /images/hero.jpg with your silk-drape Shrikhand image */}
-            <div className="aspect-[4/3] bg-cover bg-center rounded-lg shadow-inner" style={{ backgroundImage: "url('/images/hero-shrikhand.jpg')" }} aria-hidden></div>
-          </div>
         </div>
-      </div>
-
-      {/* Featured flavours */}
-      <section className="mt-10">
-        <h3 className="text-2xl font-serif mb-6">Featured Flavours</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featured.map((p) => (
-            <div key={p.id} className="rounded-2xl bg-white/90 p-6 shadow">
-              <div className="aspect-[4/3] bg-center bg-cover rounded-lg mb-4" style={{ backgroundImage: `url('${p.images[0]}')` }} />
-              <h4 className="font-semibold text-lg">{p.name}</h4>
-              <p className="text-sm mt-2">{p.short}</p>
-              <div className="mt-4 flex gap-2">
-                <button onClick={() => onOrder(p)} className="px-4 py-2 rounded-md" style={{ backgroundColor: COLORS.ivory }}>
-                  Order Now
-                </button>
-                <button className="px-4 py-2 rounded-md border" onClick={() => alert('Added to wishlist (placeholder)')}>Save</button>
-              </div>
+        
+        <!-- Product Detail Page -->
+        <div id="detail" class="page">
+            <h2 class="text-4xl font-serif-display text-center mb-12" id="product-name-detail">Product Name</h2>
+            <div class="flex flex-col lg:flex-row items-center lg:items-start space-y-8 lg:space-y-0 lg:space-x-12 bg-ivory p-8 rounded-3xl shadow-xl">
+                <div class="lg:w-1/2">
+                    <img id="product-image-detail" src="https://i.imgur.com/T0b49k1.jpeg" alt="Product Image" class="w-full rounded-2xl shadow-lg">
+                </div>
+                <div class="lg:w-1/2">
+                    <h3 class="text-3xl font-serif-display mb-2" id="product-name-detail-2"></h3>
+                    <p class="text-gray-500 mb-4" id="product-id-detail"></p>
+                    <p class="text-gray-700 text-lg mb-6" id="product-description-detail"></p>
+                    <div class="space-y-4">
+                        <div class="bg-saffron text-ivory p-4 rounded-xl shadow-md">
+                            <h4 class="font-bold">Size:</h4>
+                            <p id="product-size-detail"></p>
+                        </div>
+                        <div class="bg-saffron text-ivory p-4 rounded-xl shadow-md">
+                            <h4 class="font-bold">Ingredients:</h4>
+                            <p id="product-ingredients-detail"></p>
+                        </div>
+                        <div class="bg-saffron text-ivory p-4 rounded-xl shadow-md">
+                            <h4 class="font-bold">Features:</h4>
+                            <p id="product-features-detail"></p>
+                        </div>
+                    </div>
+                    <div class="mt-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="#" class="btn bg-saffron text-ivory font-bold text-center whatsapp-link" id="whatsapp-detail-link">Order via WhatsApp</a>
+                        <a href="#" class="btn border-2 border-saffron text-saffron font-bold text-center" id="call-detail-link">Call Us</a>
+                        <a href="#" class="btn border-2 border-saffron text-saffron font-bold text-center" id="email-detail-link">Email Us</a>
+                    </div>
+                </div>
             </div>
-          ))}
         </div>
-      </section>
 
-      {/* About preview */}
-      <section className="mt-12 rounded-2xl p-6 bg-white/80 shadow">
-        <h3 className="text-xl font-serif">Our Story</h3>
-        <p className="mt-2 text-sm">A boutique Shrikhand brand rooted in Indian tradition — handcrafted, velvety, and made with premium ingredients. <button className="underline ml-2" onClick={() => window.dispatchEvent(new CustomEvent('nav', { detail: '/about' }))}>Read more</button></p>
-      </section>
+        <!-- Team Page -->
+        <div id="team" class="page">
+            <h2 class="text-4xl font-serif-display text-center mb-12">Meet Our Team</h2>
+            <!-- Dynamic Team Cards will be inserted here by JavaScript -->
+            <div id="team-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+        </div>
 
-      {/* Team preview */}
-      <section className="mt-8">
-        <h3 className="text-xl font-serif mb-4">Meet a Few Faces Behind the Taste</h3>
-        <div className="flex gap-4 overflow-x-auto pb-2">
-          {TEAM.slice(0, 3).map((m) => (
-            <div key={m.name} className="min-w-[220px] bg-white/90 rounded-xl p-4 shadow flex gap-3 items-center">
-              <div className="w-16 h-16 rounded-full bg-gray-200" style={{ backgroundImage: `url('${m.img}')`, backgroundSize: 'cover' }} />
-              <div>
-                <div className="font-semibold">{m.name}</div>
-                <div className="text-xs">{m.role}</div>
-              </div>
+        <!-- About Us Page -->
+        <div id="about" class="page">
+            <h2 class="text-4xl font-serif-display text-center mb-12">Our Story</h2>
+            <div class="bg-ivory p-8 rounded-3xl shadow-xl space-y-8">
+                <section>
+                    <h3 class="text-3xl font-serif-display mb-4">Brand Story, Mission & Values</h3>
+                    <p class="text-gray-700 leading-relaxed text-lg">
+                        At Shrikhand, our journey began with a simple belief: that tradition and luxury can co-exist beautifully. We are a family of artisans dedicated to preserving the rich heritage of Indian sweets, starting with the beloved Shrikhand. Our mission is to elevate this classic dessert from a simple treat to a gourmet experience, using only the finest ingredients sourced with care and crafted with love. We value authenticity, quality, and the joy that comes from a perfect dessert.
+                    </p>
+                </section>
+                <section>
+                    <h3 class="text-3xl font-serif-display mb-4">What Makes Our Shrikhand Unique?</h3>
+                    <p class="text-gray-700 leading-relaxed text-lg">
+                        What sets us apart is our unwavering commitment to quality. Our shrikhand is made from a special, hand-strained yogurt that gives it an unparalleled creamy consistency. We use pure saffron and authentic Indian spices, staying true to traditional recipes while incorporating modern, hygienic techniques. It's a taste of home, perfected with a modern twist.
+                    </p>
+                </section>
+                <section>
+                    <h3 class="text-3xl font-serif-display mb-4">Behind the Scenes</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <img src="https://i.imgur.com/u74Y6bJ.jpeg" alt="Artisan at work" class="w-full h-48 object-cover rounded-2xl shadow-lg">
+                        <img src="https://i.imgur.com/3BvTzK9.jpeg" alt="Fresh ingredients" class="w-full h-48 object-cover rounded-2xl shadow-lg">
+                        <img src="https://i.imgur.com/y35R7q8.jpeg" alt="Modern kitchen" class="w-full h-48 object-cover rounded-2xl shadow-lg">
+                    </div>
+                </section>
             </div>
-          ))}
-          <button onClick={() => window.dispatchEvent(new CustomEvent('nav', { detail: '/team' }))} className="px-4 py-2 rounded-md" style={{ backgroundColor: COLORS.ivory }}>
-            Meet Our Team
-          </button>
         </div>
-      </section>
 
-      {/* Contact CTA banner */}
-      <section className="mt-10 rounded-lg p-6 flex items-center justify-between" style={{ backgroundColor: COLORS.ivory }}>
-        <div>
-          <h4 className="font-semibold">Want to taste our Shrikhand?</h4>
-          <p className="text-sm">Contact us now on WhatsApp / Call / Email.</p>
-        </div>
-        <div className="flex gap-3">
-          <a href="https://wa.me/YOURNUMBER" className="px-4 py-2 rounded-md font-medium">WhatsApp</a>
-          <a href="tel:+911234567890" className="px-4 py-2 rounded-md font-medium">Call</a>
-          <a href="mailto:hello@shrikhandboutique.com" className="px-4 py-2 rounded-md font-medium">Email</a>
-        </div>
-      </section>
-    </section>
-  );
-}
-
-function ProductCatalog({ products, onOpen }) {
-  return (
-    <section>
-      <h2 className="text-3xl font-serif mb-6">All Flavours</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {products.map((p) => (
-          <div key={p.id} className="rounded-xl bg-white/90 p-4 shadow">
-            <div className="aspect-[4/3] bg-cover bg-center rounded-lg mb-3" style={{ backgroundImage: `url('${p.images[0]}')` }} />
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="font-semibold">{p.name}</h3>
-                <p className="text-sm mt-1">{p.short}</p>
-              </div>
+        <!-- Contact Page -->
+        <div id="contact" class="page">
+            <h2 class="text-4xl font-serif-display text-center mb-12">Contact Us</h2>
+            <div class="bg-ivory p-8 rounded-3xl shadow-xl flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-8">
+                <div class="md:w-1/2">
+                    <form id="contact-form">
+                        <div class="mb-4">
+                            <label for="name" class="block text-gray-700 font-bold mb-2">Name</label>
+                            <input type="text" id="name" name="name" class="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-saffron" placeholder="Your Name" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
+                            <input type="email" id="email" name="email" class="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-saffron" placeholder="Your Email" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="message" class="block text-gray-700 font-bold mb-2">Message</label>
+                            <textarea id="message" name="message" rows="5" class="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-saffron" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn bg-saffron text-ivory font-bold w-full">Send Message</button>
+                    </form>
+                    <div id="form-message" class="mt-4 p-4 rounded-xl text-center font-bold hidden"></div>
+                </div>
+                <div class="md:w-1/2 space-y-6">
+                    <div>
+                        <h4 class="text-2xl font-serif-display mb-2">Get in Touch</h4>
+                        <p class="text-gray-700 mb-2"><i class="fas fa-envelope mr-2"></i> <a href="mailto:info@shrikhand.com" class="hover:underline">info@shrikhand.com</a></p>
+                        <p class="text-gray-700 mb-2"><i class="fas fa-phone-alt mr-2"></i> <a href="tel:+919876543210" class="hover:underline">+91 98765 43210</a></p>
+                        <a href="#" id="whatsapp-contact-link" target="_blank" class="btn bg-green-500 text-white font-bold inline-block"><i class="fab fa-whatsapp mr-2"></i> Chat Now on WhatsApp</a>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-serif-display mb-2">Find Us</h4>
+                        <!-- Mock Map -->
+                        <div class="bg-gray-200 w-full h-48 rounded-xl shadow-inner">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3782.7247341399736!2d73.81599557503462!3d18.54133498255952!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2bf9e03d40621%3A0x867011d87178873!2sPimpri-Chinchwad%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1694569584449!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-xl"></iframe>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="mt-4 flex gap-2">
-              <button onClick={() => onOpen(p)} className="px-4 py-2 rounded-md" style={{ backgroundColor: COLORS.ivory }}>View</button>
-              <a className="px-4 py-2 rounded-md border" href={`https://wa.me/YOURNUMBER?text=I%20want%20to%20order%20${encodeURIComponent(p.name)}`}>Order via WhatsApp</a>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function ProductDetail({ product, onBack }) {
-  return (
-    <section>
-      <button onClick={onBack} className="text-sm mb-4">← Back to products</button>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <div className="rounded-lg overflow-hidden">
-            {/* Main image carousel placeholder */}
-            <div className="aspect-[4/3] bg-cover bg-center" style={{ backgroundImage: `url('${product.images[0]}')` }}></div>
-          </div>
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            {product.images.map((img, i) => (
-              <div key={i} className="aspect-[4/3] rounded-md bg-cover bg-center" style={{ backgroundImage: `url('${img}')` }} />
-            ))}
-          </div>
         </div>
 
-        <div className="bg-white/90 rounded-xl p-6 shadow">
-          <h2 className="text-2xl font-serif">{product.name}</h2>
-          <div className="text-xs text-muted mt-1">Product ID: {product.id}</div>
-          <p className="mt-4 text-sm">{product.long}</p>
+    </main>
 
-          <div className="mt-6">
-            <h4 className="font-medium">Order Options</h4>
-            <p className="text-sm mt-2">Sizes: 200g, 400g — Custom orders on request.</p>
-            <div className="mt-4 flex gap-3">
-              <a className="px-4 py-2 rounded-md" href={`https://wa.me/YOURNUMBER?text=Hi%20I%20want%20to%20order%20${encodeURIComponent(product.name)}`} style={{ backgroundColor: COLORS.ivory }}>WhatsApp</a>
-              <a className="px-4 py-2 rounded-md border" href="tel:+911234567890">Call</a>
-              <a className="px-4 py-2 rounded-md" href="mailto:hello@shrikhandboutique.com" style={{ backgroundColor: COLORS.ivory }}>Email</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TeamPage() {
-  return (
-    <section>
-      <h2 className="text-3xl font-serif mb-6">Meet Our Team</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {TEAM.map((m) => (
-          <div key={m.name} className="bg-white/90 rounded-xl p-4 shadow flex gap-4 items-center">
-            <div className="w-20 h-20 rounded-full bg-gray-200" style={{ backgroundImage: `url('${m.img}')`, backgroundSize: 'cover' }} />
+    <!-- Footer -->
+    <footer class="bg-zinc-800 text-ivory p-8 mt-16 rounded-t-3xl shadow-inner">
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
             <div>
-              <div className="font-semibold">{m.name}</div>
-              <div className="text-sm">{m.role}</div>
-              <div className="text-xs mt-2">Email: <a href={`mailto:${m.name.toLowerCase()}@shrikhandboutique.com`} className="underline">{m.name.toLowerCase()}@shrikhandboutique.com</a></div>
+                <h5 class="text-2xl font-serif-display mb-4">Quick Links</h5>
+                <ul class="space-y-2">
+                    <li><a href="#" data-page="home" class="hover:underline">Home</a></li>
+                    <li><a href="#" data-page="catalog" class="hover:underline">Products</a></li>
+                    <li><a href="#" data-page="team" class="hover:underline">Team</a></li>
+                    <li><a href="#" data-page="about" class="hover:underline">About Us</a></li>
+                    <li><a href="#" data-page="contact" class="hover:underline">Contact</a></li>
+                </ul>
             </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function AboutPage() {
-  return (
-    <section>
-      <h2 className="text-3xl font-serif mb-4">Our Story</h2>
-      <p className="text-sm mb-4">Shrikhand Boutique is a passion project that celebrates the velvety, fragrant heritage of Indian desserts. We combine time-honoured recipes with premium ingredients to craft small-batch Shrikhand meant for special moments.</p>
-
-      <h3 className="font-semibold">Mission & Values</h3>
-      <ul className="list-disc ml-6 mt-2 text-sm">
-        <li>Authentic taste rooted in tradition</li>
-        <li>Premium ingredients, sustainable sourcing</li>
-        <li>Handcrafted small-batch production</li>
-      </ul>
-
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="aspect-[4/3] rounded-lg bg-cover" style={{ backgroundImage: "url('/images/behind-1.jpg')" }} />
-        <div className="aspect-[4/3] rounded-lg bg-cover" style={{ backgroundImage: "url('/images/behind-2.jpg')" }} />
-      </div>
-    </section>
-  );
-}
-
-function ContactPage() {
-  return (
-    <section>
-      <h2 className="text-3xl font-serif mb-4">Contact Us</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <form className="bg-white/90 rounded-xl p-6 shadow">
-          <label className="block mb-2 text-sm">Name</label>
-          <input className="w-full mb-3 p-2 rounded-md" placeholder="Your name" />
-          <label className="block mb-2 text-sm">Email</label>
-          <input className="w-full mb-3 p-2 rounded-md" placeholder="you@example.com" />
-          <label className="block mb-2 text-sm">Message</label>
-          <textarea className="w-full mb-3 p-2 rounded-md" rows={5} placeholder="How can we help?" />
-          <div className="flex gap-3">
-            <button type="button" className="px-4 py-2 rounded-md" style={{ backgroundColor: COLORS.ivory }}>Send Message</button>
-            <a href="https://wa.me/YOURNUMBER" className="px-4 py-2 rounded-md border">Chat on WhatsApp</a>
-          </div>
-        </form>
-
-        <div className="bg-white/90 rounded-xl p-6 shadow">
-          <h4 className="font-semibold">Business Info</h4>
-          <p className="text-sm mt-2">Email: hello@shrikhandboutique.com</p>
-          <p className="text-sm">Phone: +91 12345 67890</p>
-          <p className="text-sm">Address: Replace with your address</p>
-
-          <div className="mt-4">
-            <h5 className="font-medium">Find us</h5>
-            <div className="mt-2">[Map placeholder — embed Google Maps iframe in production]</div>
-
-            <div className="mt-4 flex gap-3">
-              <a href="#" aria-label="Instagram">Instagram</a>
-              <a href="#" aria-label="Facebook">Facebook</a>
+            <div>
+                <h5 class="text-2xl font-serif-display mb-4">Contact Info</h5>
+                <p class="mb-2"><i class="fas fa-phone-alt mr-2"></i> +91 98765 43210</p>
+                <p class="mb-2"><i class="fas fa-envelope mr-2"></i> info@shrikhand.com</p>
+                <p>123 Shrikhand Lane, Pune, India 411001</p>
             </div>
-          </div>
+            <div>
+                <h5 class="text-2xl font-serif-display mb-4">Follow Us</h5>
+                <div class="flex justify-center md:justify-start space-x-6 text-2xl">
+                    <a href="#" class="hover:text-saffron transition-colors"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="hover:text-saffron transition-colors"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="hover:text-saffron transition-colors"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function Footer({ onNavigate }) {
-  return (
-    <footer className="mt-10 py-6 text-sm text-white/95">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-          <div className="font-semibold">Shrikhand Boutique</div>
-          <div className="text-xs">Phone: +91 12345 67890 • Email: hello@shrikhandboutique.com</div>
+        <div class="text-center text-gray-400 mt-8">
+            <p>&copy; 2024 Shrikhand. All Rights Reserved.</p>
         </div>
-
-        <div className="flex gap-4">
-          <button onClick={() => onNavigate('/home')}>Home</button>
-          <button onClick={() => onNavigate('/products')}>Products</button>
-          <button onClick={() => onNavigate('/team')}>Team</button>
-          <button onClick={() => onNavigate('/about')}>About</button>
-          <button onClick={() => onNavigate('/contact')}>Contact</button>
-        </div>
-      </div>
     </footer>
-  );
-}
 
-/* Global small style injection to set fonts and a few token styles. In production move this to your CSS. */
-const style = document.createElement('style');
-style.innerHTML = `
-  .font-inter { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
-  .font-serif { font-family: 'Playfair Display', serif; }
-`;
-document.head.appendChild(style);
+    <script>
+        // Centralized data for the website to make it easier to manage
+        const contactInfo = {
+            whatsappNumber: '919876543210',
+            phoneNumber: '+919876543210',
+            email: 'info@shrikhand.com'
+        };
 
-// Simple event listener that allows hero quick-links to navigate using the header method above
-window.addEventListener('nav', (e) => {
-  const route = e.detail;
-  // Attempt to find the app root and call navigate if available
-  // This code is a best-effort helper for the single-file demo. In a real app use React Router.
-  const rootBtn = document.querySelector('button[onClick]');
-  // This is only for the demo; ignore if not mounted.
-});
+        const products = {
+            'classic': {
+                name: 'Classic Shrikhand',
+                id: 'SK-C001',
+                description: 'Our signature Classic Shrikhand is a timeless delicacy. Crafted from fresh, strained yogurt, it is subtly sweetened and infused with the warm, aromatic notes of cardamom. This rich and creamy dessert embodies the perfect balance of simplicity and sophistication.',
+                size: '250g | 500g',
+                ingredients: 'Strained Yogurt, Sugar, Cardamom, Saffron.',
+                features: 'Smooth & Creamy, Subtle Spices, No Preservatives.',
+                image: 'https://i.imgur.com/T0b49k1.jpeg'
+            },
+            'kesar-pista': {
+                name: 'Kesar Pista',
+                id: 'SK-K002',
+                description: 'A royal treat for the senses. Our Kesar Pista Shrikhand is generously infused with premium saffron threads, lending it a beautiful golden hue and an enchanting aroma. It is then topped with a generous sprinkle of finely chopped pistachios, providing a delightful crunch and nutty flavor.',
+                size: '250g | 500g',
+                ingredients: 'Strained Yogurt, Sugar, Saffron, Pistachios.',
+                features: 'Regal Saffron, Nutty Crunch, Rich Flavor.',
+                image: 'https://i.imgur.com/p1fH7mR.jpeg'
+            },
+            'mango': {
+                name: 'Mango Mirang',
+                id: 'SK-M003',
+                description: 'A vibrant blend of creamy shrikhand and the sweet, tangy essence of ripe mangoes. Our Mango Mirang is a seasonal favorite, celebrating the king of fruits. It’s a refreshing and luscious dessert that’s perfect for a warm summer day.',
+                size: '250g | 500g',
+                ingredients: 'Strained Yogurt, Sugar, Mango Puree.',
+                features: 'Seasonal Delight, Fruity & Fresh, Smooth Texture.',
+                image: 'https://i.imgur.com/1GvL3rV.jpeg'
+            }
+        };
+
+        const teamMembers = [
+            { name: 'Isha Sharma', role: 'Website & Marketing', department: 'Website', image: 'https://placehold.co/100x100/D9A066/FFF8E6?text=Isha' },
+            { name: 'Muneeb Khan', role: 'Head of Raw Materials', department: 'Raw Material', image: 'https://placehold.co/100x100/D9A066/FFF8E6?text=Muneeb' },
+            { name: 'Bhushan Patil', role: 'Head of Logistics', department: 'Logistics', image: 'https://placehold.co/100x100/D9A066/FFF8E6?text=Bhushan' },
+            { name: 'Sarabpreet Singh', role: 'Lead Graphic Designer', department: 'Graphics', image: 'https://placehold.co/100x100/D9A066/FFF8E6?text=Sarabpreet' },
+            { name: 'Pushpendra Kumar', role: 'Pricing Strategist', department: 'Pricing', image: 'https://placehold.co/100x100/D9A066/FFF8E6?text=Pushpendra' },
+            { name: 'Ashutosh Singh', role: 'Head of Production', department: 'Labour', image: 'https://placehold.co/100x100/D9A066/FFF8E6?text=Ashutosh' },
+            { name: 'Toshi Patel', role: 'Packaging Designer', department: 'Packaging', image: 'https://placehold.co/100x100/D9A066/FFF8E6?text=Toshi' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('[data-page]');
+            const pages = document.querySelectorAll('.page');
+            const shrikhandTitle = document.querySelector('h1[data-page="home"]');
+
+            // Function to navigate between pages
+            function showPage(pageId, productId = null) {
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById(pageId).classList.add('active');
+
+                // If it's the product detail page, render the specific product data
+                if (pageId === 'detail' && productId) {
+                    renderProductDetail(productId);
+                }
+            }
+
+            // Function to render the product detail page dynamically
+            function renderProductDetail(productId) {
+                const product = products[productId];
+                if (!product) return;
+
+                document.getElementById('product-name-detail').textContent = product.name;
+                document.getElementById('product-name-detail-2').textContent = product.name;
+                document.getElementById('product-id-detail').textContent = `Product ID: ${product.id}`;
+                document.getElementById('product-description-detail').textContent = product.description;
+                document.getElementById('product-size-detail').textContent = product.size;
+                document.getElementById('product-ingredients-detail').textContent = product.ingredients;
+                document.getElementById('product-features-detail').textContent = product.features;
+                document.getElementById('product-image-detail').src = product.image;
+
+                // Update WhatsApp link on the detail page
+                const whatsappDetailLink = document.getElementById('whatsapp-detail-link');
+                whatsappDetailLink.href = createWhatsAppLink(`Hello, I would like to order the ${product.name}!`);
+            }
+
+            // Function to generate a WhatsApp link with a pre-filled message
+            function createWhatsAppLink(message) {
+                const encodedMessage = encodeURIComponent(message);
+                return `https://wa.me/${contactInfo.whatsappNumber}?text=${encodedMessage}`;
+            }
+
+            // Function to render team members dynamically
+            function renderTeam() {
+                const teamContainer = document.getElementById('team-container');
+                teamContainer.innerHTML = ''; // Clear previous content
+
+                // Create a map to group members by department
+                const departments = teamMembers.reduce((acc, member) => {
+                    if (!acc[member.department]) {
+                        acc[member.department] = [];
+                    }
+                    acc[member.department].push(member);
+                    return acc;
+                }, {});
+
+                for (const dept in departments) {
+                    const deptSection = document.createElement('div');
+                    deptSection.className = 'col-span-full mb-8';
+                    deptSection.innerHTML = `<h3 class="text-3xl font-serif-display text-center mb-6">${dept} Department</h3>`;
+                    
+                    const membersDiv = document.createElement('div');
+                    membersDiv.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8';
+                    
+                    departments[dept].forEach(member => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-ivory p-6 rounded-3xl shadow-lg text-center';
+                        card.innerHTML = `
+                            <img src="${member.image}" alt="${member.name}" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover shadow">
+                            <h4 class="text-xl font-serif-display">${member.name}</h4>
+                            <p class="text-gray-600 text-sm">${member.role}</p>
+                        `;
+                        membersDiv.appendChild(card);
+                    });
+                    
+                    deptSection.appendChild(membersDiv);
+                    teamContainer.appendChild(deptSection);
+                }
+            }
+            
+            // Set event listeners for navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = link.dataset.page;
+                    const productId = link.dataset.product;
+                    showPage(pageId, productId);
+                });
+            });
+
+            // Set event listener for the title
+            shrikhandTitle.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('home');
+            });
+
+            // Set event listeners for all WhatsApp links
+            document.querySelectorAll('.whatsapp-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const productId = e.target.dataset.product;
+                    if (productId) {
+                        const product = products[productId];
+                        e.target.href = createWhatsAppLink(`Hello, I would like to order the ${product.name}!`);
+                    } else {
+                        e.target.href = createWhatsAppLink('Hello, I would like to inquire about Shrikhand.');
+                    }
+                    // This is a workaround to trigger the link click after the href is set
+                    setTimeout(() => window.open(e.target.href, '_blank'), 100);
+                });
+            });
+
+            // Handle Contact Form Submission
+            const contactForm = document.getElementById('contact-form');
+            const formMessage = document.getElementById('form-message');
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent page refresh
+                formMessage.textContent = 'Thank you for your message! We will get back to you soon.';
+                formMessage.classList.remove('hidden');
+                formMessage.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-300');
+                contactForm.reset();
+            });
+
+            // Initial page load
+            showPage('home');
+            renderTeam();
+        });
+    </script>
+</body>
+</html>
